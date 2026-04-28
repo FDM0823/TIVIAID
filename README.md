@@ -27,6 +27,19 @@ npm run build
 npm run prisma:validate
 ```
 
+## Authentication
+
+TivAid includes credential-based patient and doctor authentication:
+
+- `POST /api/auth/register`
+- `POST /api/auth/login`
+- `POST /api/auth/logout`
+- `GET /api/auth/me`
+
+Authentication uses an HTTP-only JWT cookie named `tivaid_session`. Set
+`JWT_SECRET` in production. If it is not set locally, the app uses a development
+fallback so the starter can run immediately.
+
 ## Prisma
 
 The Prisma schema targets Prisma 7+ configuration conventions. Set

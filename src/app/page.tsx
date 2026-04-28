@@ -32,12 +32,20 @@ export default function Home() {
             </p>
           </div>
         </div>
-        <a
-          className="rounded-full bg-slate-950 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800 dark:bg-white dark:text-slate-950 dark:hover:bg-slate-200"
-          href="/api/health"
-        >
-          API health
-        </a>
+        <div className="flex items-center gap-2">
+          <a
+            className="rounded-full border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-800 transition hover:border-teal-400 hover:text-teal-700 dark:border-slate-700 dark:text-slate-100"
+            href="/login"
+          >
+            Log in
+          </a>
+          <a
+            className="rounded-full bg-slate-950 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800 dark:bg-white dark:text-slate-950 dark:hover:bg-slate-200"
+            href="/register"
+          >
+            Register
+          </a>
+        </div>
       </nav>
 
       <section className="grid flex-1 items-center gap-10 py-16 lg:grid-cols-[1.1fr_0.9fr]">
