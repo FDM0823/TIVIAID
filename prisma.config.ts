@@ -1,4 +1,4 @@
-export default {
+const prismaConfig = {
   schema: "prisma/schema.prisma",
   migrations: {
     path: "prisma/migrations",
@@ -7,3 +7,5 @@ export default {
     url: process.env.DATABASE_URL ?? "postgresql://user:password@localhost:5432/tivaid",
   },
 };
+
+export default prismaConfig;
