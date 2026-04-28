@@ -45,13 +45,22 @@ fallback so the starter can run immediately.
 Authenticated patients can manage their medical profile at `/patient`.
 
 - `GET /api/patient/profile`
-- `PATCH /api/patient/profile`
+- `PUT /api/patient/profile`
 - `POST /api/patient/qr/emergency`
 - Public emergency profile: `/emergency/[publicCode]`
 
 Emergency QR codes store only a hashed secret token server-side and expose a
 limited read-only emergency summary, blood type, allergies, active conditions,
 active medications, and emergency contacts.
+
+## Doctor module
+
+Authenticated doctors can use `/doctor` to simulate scanning a patient QR code
+by entering its public code or emergency URL, review limited patient context, and
+create encounter notes that are added to the patient's medical history.
+
+- `POST /api/doctor/scan`
+- `POST /api/doctor/patients/[patientId]/notes`
 
 ## Prisma
 

@@ -86,6 +86,27 @@ export default async function DashboardPage() {
           </a>
         </section>
       ) : null}
+
+      {user?.role === "DOCTOR" ? (
+        <section className="mt-8 rounded-3xl border border-cyan-200 bg-cyan-50 p-6 dark:border-cyan-900 dark:bg-cyan-950/30">
+          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-cyan-800 dark:text-cyan-200">
+            Doctor module
+          </p>
+          <h2 className="mt-2 text-2xl font-bold text-slate-950 dark:text-white">
+            Scan patient QR and update history
+          </h2>
+          <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600 dark:text-slate-300">
+            Simulate a QR scan with a patient public code, review limited patient context,
+            and add encounter notes to the patient timeline.
+          </p>
+          <a
+            className="mt-5 inline-flex rounded-full bg-cyan-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-cyan-700"
+            href="/doctor"
+          >
+            Open doctor dashboard
+          </a>
+        </section>
+      ) : null}
     </main>
   );
 }
