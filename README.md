@@ -8,3 +8,9 @@ appointments, prescriptions, and QR-based emergency medical access.
 
 - [Architecture, folder structure, and tech stack](docs/architecture.md)
 - [Initial Prisma database schema](prisma/schema.prisma)
+
+## Prisma
+
+The Prisma schema targets Prisma 7+ configuration conventions. Set
+`DATABASE_URL` before running migration or database commands; schema validation
+can run without a live database connection.
