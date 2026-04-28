@@ -65,6 +65,27 @@ export default async function DashboardPage() {
           />
         ))}
       </section>
+
+      {user?.role === "PATIENT" ? (
+        <section className="mt-8 rounded-3xl border border-teal-200 bg-teal-50 p-6 dark:border-teal-900 dark:bg-teal-950/30">
+          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-teal-800 dark:text-teal-200">
+            Patient module
+          </p>
+          <h2 className="mt-2 text-2xl font-bold text-slate-950 dark:text-white">
+            Manage your profile and emergency QR
+          </h2>
+          <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600 dark:text-slate-300">
+            Update blood type, emergency summary, vitals, conditions, allergies, and generate
+            a limited emergency QR code linked to your profile.
+          </p>
+          <a
+            className="mt-5 inline-flex rounded-full bg-teal-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-teal-700"
+            href="/patient"
+          >
+            Open patient profile
+          </a>
+        </section>
+      ) : null}
     </main>
   );
 }

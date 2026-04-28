@@ -40,6 +40,19 @@ Authentication uses an HTTP-only JWT cookie named `tivaid_session`. Set
 `JWT_SECRET` in production. If it is not set locally, the app uses a development
 fallback so the starter can run immediately.
 
+## Patient module
+
+Authenticated patients can manage their medical profile at `/patient`.
+
+- `GET /api/patient/profile`
+- `PATCH /api/patient/profile`
+- `POST /api/patient/qr/emergency`
+- Public emergency profile: `/emergency/[publicCode]`
+
+Emergency QR codes store only a hashed secret token server-side and expose a
+limited read-only emergency summary, blood type, allergies, active conditions,
+active medications, and emergency contacts.
+
 ## Prisma
 
 The Prisma schema targets Prisma 7+ configuration conventions. Set
