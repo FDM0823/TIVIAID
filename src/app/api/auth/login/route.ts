@@ -1,6 +1,12 @@
-import { NextResponse } from "next/server";
 import { ZodError } from "zod";
 
+import {
+  jsonError,
+  jsonOk,
+  parseJsonBody,
+  RequestBodyError,
+  validationError,
+} from "@/lib/api/security";
 import { getAuthCookieOptions, signAuthToken } from "@/lib/auth/jwt";
 import { verifyPassword } from "@/lib/auth/password";
 import { loginSchema } from "@/lib/auth/validation";
@@ -8,7 +14,7 @@ import { prisma } from "@/lib/prisma";
 
 export async function POST(request: Request) {
   try {
-    const payload = loginSchema.parse(await request.json());
+    const payload = loginSchema.parse(await parseJsonBody(request));
     const email = payload.email.toLowerCase();
 
     const user = await prisma.user.findUnique({
@@ -17,18 +23,15 @@ export async function POST(request: Request) {
     });
 
     if (!user?.passwordHash || !(await verifyPassword(payload.password, user.passwordHash))) {
-      return NextResponse.json({ message: "Invalid email or password." }, { status: 401 });
+      return jsonError("Invalid email or password.", 401);
     }
 
     if (user.status !== "ACTIVE") {
-      return NextResponse.json({ message: "This account is not active." }, { status: 403 });
+      return jsonError("This account is not active.", 403);
     }
 
     if (user.role !== "PATIENT" && user.role !== "DOCTOR") {
-      return NextResponse.json(
-        { message: "Only patient and doctor accounts can sign in here." },
-        { status: 403 },
-      );
+      return jsonError("Only patient and doctor accounts can sign in here.", 403);
     }
 
     await prisma.user.update({
@@ -43,7 +46,7 @@ export async function POST(request: Request) {
       name: user.profile ? `${user.profile.firstName} ${user.profile.lastName}` : user.email,
     });
 
-    const response = NextResponse.json({
+    const response = jsonOk({
       user: {
         id: user.id,
         email: user.email,
@@ -60,12 +63,13 @@ export async function POST(request: Request) {
     return response;
   } catch (error) {
     if (error instanceof ZodError) {
-      return NextResponse.json(
-        { message: "Invalid login payload.", issues: error.flatten() },
-        { status: 400 },
-      );
+      return validationError("Invalid login payload.", error);
     }
 
-    return NextResponse.json({ message: "Unable to log in." }, { status: 500 });
+    if (error instanceof RequestBodyError) {
+      return jsonError(error.message, error.status);
+    }
+
+    return jsonError("Unable to log in.", 500);
   }
 }

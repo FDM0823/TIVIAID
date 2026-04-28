@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 
 import { prisma } from "@/lib/prisma";
+import { decryptSensitiveText } from "@/lib/security/encryption";
 
 type EmergencyPageProps = {
   params: Promise<{
@@ -119,7 +120,7 @@ export default async function EmergencyProfilePage({ params }: EmergencyPageProp
         <section className="mt-6 rounded-2xl border border-slate-200 bg-white p-6 dark:border-slate-800 dark:bg-slate-900">
           <h2 className="text-xl font-bold text-slate-950 dark:text-white">Emergency summary</h2>
           <p className="mt-3 whitespace-pre-wrap text-slate-700 dark:text-slate-300">
-            {patient.emergencySummary}
+            {decryptSensitiveText(patient.emergencySummary)}
           </p>
         </section>
       ) : null}
@@ -129,7 +130,9 @@ export default async function EmergencyProfilePage({ params }: EmergencyPageProp
           emptyLabel="No allergies listed."
           items={patient.allergies.map((allergy) => ({
             title: allergy.substance,
-            detail: [allergy.severity, allergy.reaction].filter(Boolean).join(" - "),
+            detail: [allergy.severity, decryptSensitiveText(allergy.reaction)]
+              .filter(Boolean)
+              .join(" - "),
           }))}
           title="Allergies"
         />
@@ -137,7 +140,11 @@ export default async function EmergencyProfilePage({ params }: EmergencyPageProp
           emptyLabel="No active medications listed."
           items={patient.medications.map((medication) => ({
             title: medication.name,
-            detail: [medication.dosage, medication.frequency, medication.route]
+            detail: [
+              decryptSensitiveText(medication.dosage),
+              decryptSensitiveText(medication.frequency),
+              medication.route,
+            ]
               .filter(Boolean)
               .join(" - "),
           }))}
@@ -155,7 +162,7 @@ export default async function EmergencyProfilePage({ params }: EmergencyPageProp
           emptyLabel="No emergency contacts listed."
           items={patient.emergencyContacts.map((contact) => ({
             title: contact.name,
-            detail: `${contact.relationship} - ${contact.phone}`,
+            detail: `${decryptSensitiveText(contact.relationship)} - ${decryptSensitiveText(contact.phone)}`,
           }))}
           title="Emergency contacts"
         />

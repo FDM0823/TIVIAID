@@ -6,6 +6,7 @@ import QRCode from "qrcode";
 import { getCurrentUser } from "@/lib/auth/session";
 import { prisma } from "@/lib/prisma";
 import type { PrescriptionInput } from "@/lib/prescriptions/validation";
+import { decryptNullable, encryptNullable } from "@/lib/security/encryption";
 
 export async function getCurrentPrescriptionActor() {
   const user = await getCurrentUser();
@@ -68,7 +69,7 @@ export async function createPrescriptionForDoctor({
         route: input.route,
         quantity: input.quantity,
         refills: input.refills,
-        instructions: input.instructions,
+        instructions: encryptNullable(input.instructions),
         expiresAt: input.expiresAt ? new Date(input.expiresAt) : null,
         verificationQrCodeId: qrCode.id,
       },
@@ -234,7 +235,7 @@ export function toPrescriptionView(prescription: PrescriptionWithRelations) {
     route: prescription.route,
     quantity: prescription.quantity,
     refills: prescription.refills,
-    instructions: prescription.instructions,
+    instructions: decryptNullable(prescription.instructions),
     status: prescription.status,
     prescribedAt: prescription.prescribedAt.toISOString(),
     expiresAt: prescription.expiresAt?.toISOString() ?? null,

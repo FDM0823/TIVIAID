@@ -1,15 +1,15 @@
 import { UserRole } from "@prisma/client";
-import { NextResponse } from "next/server";
 import { ZodError } from "zod";
 
 import { createAuthCookie } from "@/lib/auth/jwt";
 import { hashPassword } from "@/lib/auth/password";
+import { jsonError, jsonOk, parseJsonBody, validationError } from "@/lib/api/security";
 import { registerSchema } from "@/lib/auth/validation";
 import { prisma } from "@/lib/prisma";
 
 export async function POST(request: Request) {
   try {
-    const payload = registerSchema.parse(await request.json());
+    const payload = registerSchema.parse(await parseJsonBody(request));
     const email = payload.email.toLowerCase();
 
     const existingUser = await prisma.user.findUnique({
@@ -18,10 +18,7 @@ export async function POST(request: Request) {
     });
 
     if (existingUser) {
-      return NextResponse.json(
-        { error: "An account with this email already exists." },
-        { status: 409 },
-      );
+      return jsonError("An account with this email already exists.", 409);
     }
 
     const passwordHash = await hashPassword(payload.password);
@@ -70,7 +67,7 @@ export async function POST(request: Request) {
       return createdUser;
     });
 
-    const response = NextResponse.json(
+    const response = jsonOk(
       {
         user: {
           id: user.id,
@@ -96,13 +93,10 @@ export async function POST(request: Request) {
     return response;
   } catch (error) {
     if (error instanceof ZodError) {
-      return NextResponse.json(
-        { error: "Invalid registration data.", issues: error.flatten().fieldErrors },
-        { status: 400 },
-      );
+      return validationError(error);
     }
 
     console.error("Registration failed", error);
-    return NextResponse.json({ error: "Registration failed." }, { status: 500 });
+    return jsonError("Registration failed.", 500);
   }
 }

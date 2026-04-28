@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { AUTH_COOKIE_NAME } from "@/lib/auth/constants";
 import { verifyAuthToken } from "@/lib/auth/jwt";
+import { applySecurityHeaders } from "@/lib/api/security";
 
 const protectedRoutes = ["/dashboard", "/patient", "/doctor", "/appointments"];
 
@@ -11,7 +12,7 @@ export async function proxy(request: NextRequest) {
   );
 
   if (!isProtectedRoute) {
-    return NextResponse.next();
+    return applySecurityHeaders(NextResponse.next());
   }
 
   const token = request.cookies.get(AUTH_COOKIE_NAME)?.value;
@@ -20,10 +21,10 @@ export async function proxy(request: NextRequest) {
   if (!payload) {
     const loginUrl = new URL("/login", request.url);
     loginUrl.searchParams.set("next", request.nextUrl.pathname);
-    return NextResponse.redirect(loginUrl);
+    return applySecurityHeaders(NextResponse.redirect(loginUrl));
   }
 
-  return NextResponse.next();
+  return applySecurityHeaders(NextResponse.next());
 }
 
 export const config = {

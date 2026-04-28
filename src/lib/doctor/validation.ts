@@ -1,30 +1,25 @@
 import { z } from "zod";
 
+import { optionalNormalizedText, requiredNormalizedText } from "@/lib/security/validation";
+
 export const scanPatientQrSchema = z.object({
-  publicCode: z.string().trim().min(1, "Enter a patient QR public code."),
+  publicCode: requiredNormalizedText(128, "Enter a patient QR public code."),
 });
 
-const optionalText = z
-  .string()
-  .trim()
-  .transform((value) => (value.length > 0 ? value : null))
-  .nullable()
-  .optional();
-
 export const doctorNoteSchema = z.object({
-  chiefComplaint: optionalText,
-  subjective: optionalText,
-  objective: optionalText,
-  assessment: optionalText,
-  plan: optionalText,
-  noteTitle: z.string().trim().min(1, "Note title is required."),
-  noteBody: z.string().trim().min(1, "Clinical note is required."),
-  conditionName: optionalText,
-  medicationName: optionalText,
-  medicationDosage: optionalText,
-  medicationFrequency: optionalText,
-  allergySubstance: optionalText,
-  allergyReaction: optionalText,
+  chiefComplaint: optionalNormalizedText(500),
+  subjective: optionalNormalizedText(4000),
+  objective: optionalNormalizedText(4000),
+  assessment: optionalNormalizedText(4000),
+  plan: optionalNormalizedText(4000),
+  noteTitle: requiredNormalizedText(200, "Note title is required."),
+  noteBody: requiredNormalizedText(8000, "Clinical note is required."),
+  conditionName: optionalNormalizedText(200),
+  medicationName: optionalNormalizedText(200),
+  medicationDosage: optionalNormalizedText(120),
+  medicationFrequency: optionalNormalizedText(120),
+  allergySubstance: optionalNormalizedText(200),
+  allergyReaction: optionalNormalizedText(500),
 });
 
 export type ScanPatientQrInput = z.infer<typeof scanPatientQrSchema>;

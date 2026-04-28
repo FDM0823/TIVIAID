@@ -3,6 +3,7 @@ import { notFound, redirect } from "next/navigation";
 
 import { getCurrentUser } from "@/lib/auth/session";
 import { prisma } from "@/lib/prisma";
+import { decryptNullable, encryptNullable } from "@/lib/security/encryption";
 import type {
   CreateAppointmentInput,
   UpdateAppointmentStatusInput,
@@ -89,8 +90,8 @@ export async function createAppointment(input: CreateAppointmentInput) {
     data: {
       patientId: patient.id,
       doctorId: input.doctorId,
-      reason: input.reason,
-      notes: input.notes,
+      reason: encryptNullable(input.reason),
+      notes: encryptNullable(input.notes),
       startsAt,
       endsAt,
       status: AppointmentStatus.REQUESTED,
@@ -145,7 +146,7 @@ export async function updateAppointmentStatus(
       status: input.status,
       cancelledAt: input.status === AppointmentStatus.CANCELLED ? new Date() : null,
       cancellationReason:
-        input.status === AppointmentStatus.CANCELLED ? input.cancellationReason : null,
+        input.status === AppointmentStatus.CANCELLED ? encryptNullable(input.cancellationReason) : null,
     },
     include: {
       patient: { include: { user: { include: { profile: true } } } },
@@ -170,8 +171,8 @@ function toAppointmentView(appointment: AppointmentWithPeople) {
   return {
     id: appointment.id,
     status: appointment.status,
-    reason: appointment.reason,
-    notes: appointment.notes,
+    reason: decryptNullable(appointment.reason),
+    notes: decryptNullable(appointment.notes),
     startsAt: appointment.startsAt.toISOString(),
     endsAt: appointment.endsAt.toISOString(),
     patientName: formatPersonName(appointment.patient.user.profile, "Patient"),

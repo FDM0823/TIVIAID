@@ -1,44 +1,45 @@
-import { NextResponse } from "next/server";
 import { ZodError } from "zod";
 
 import { getCurrentDoctor } from "@/lib/doctor/data";
+import { methodNotAllowed, parseJsonBody, secureJson, validationErrorJson } from "@/lib/api/security";
 import { createDigitalPrescription, getPrescriptionsForCurrentUser } from "@/lib/prescriptions/data";
 import { prescriptionSchema } from "@/lib/prescriptions/validation";
 
 export async function GET() {
   const prescriptions = await getPrescriptionsForCurrentUser();
 
-  return NextResponse.json({ prescriptions });
+  return secureJson({ prescriptions });
 }
 
 export async function POST(request: Request) {
   const doctor = await getCurrentDoctor();
 
   if (!doctor) {
-    return NextResponse.json({ error: "Doctor account required." }, { status: 403 });
+    return secureJson({ error: "Doctor account required." }, { status: 403 });
   }
 
   try {
-    const payload = prescriptionSchema.parse(await request.json());
+    const payload = prescriptionSchema.parse(await parseJsonBody(request));
     const prescription = await createDigitalPrescription({
       doctorId: doctor.id,
       input: payload,
     });
 
     if (!prescription) {
-      return NextResponse.json({ error: "Patient relationship not found." }, { status: 404 });
+      return secureJson({ error: "Patient relationship not found." }, { status: 404 });
     }
 
-    return NextResponse.json({ prescription }, { status: 201 });
+    return secureJson({ prescription }, { status: 201 });
   } catch (error) {
     if (error instanceof ZodError) {
-      return NextResponse.json(
-        { error: "Invalid prescription data.", issues: error.flatten().fieldErrors },
-        { status: 400 },
-      );
+      return validationErrorJson("Invalid prescription data.", error);
     }
 
     console.error("Prescription creation failed", error);
-    return NextResponse.json({ error: "Unable to create prescription." }, { status: 500 });
+    return secureJson({ error: "Unable to create prescription." }, { status: 500 });
   }
 }
+
+export const PUT = methodNotAllowed;
+export const PATCH = methodNotAllowed;
+export const DELETE = methodNotAllowed;

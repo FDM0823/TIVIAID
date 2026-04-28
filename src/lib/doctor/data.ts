@@ -4,6 +4,7 @@ import { notFound, redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth/session";
 import { prisma } from "@/lib/prisma";
 import type { DoctorNoteInput } from "@/lib/doctor/validation";
+import { decryptNullable, encryptNullable } from "@/lib/security/encryption";
 
 export async function requireDoctorUser() {
   const user = await getCurrentUser();
@@ -268,10 +269,10 @@ export async function createDoctorPatientNote({
         type: EncounterType.CONSULTATION,
         status: "SIGNED",
         chiefComplaint: input.chiefComplaint,
-        subjective: input.subjective,
-        objective: input.objective,
-        assessment: input.assessment,
-        plan: input.plan,
+        subjective: encryptNullable(input.subjective),
+        objective: encryptNullable(input.objective),
+        assessment: encryptNullable(input.assessment),
+        plan: encryptNullable(input.plan),
         signedAt: new Date(),
       },
     });
@@ -283,14 +284,14 @@ export async function createDoctorPatientNote({
         createdByUserId: doctorUserId,
         type: MedicalRecordType.ENCOUNTER_NOTE,
         title: input.noteTitle,
-        description: input.noteBody,
+        description: encryptNullable(input.noteBody),
         metadata: {
           source: "doctor-dashboard",
           chiefComplaint: input.chiefComplaint,
-          subjective: input.subjective,
-          objective: input.objective,
-          assessment: input.assessment,
-          plan: input.plan,
+          subjective: encryptNullable(input.subjective),
+          objective: encryptNullable(input.objective),
+          assessment: encryptNullable(input.assessment),
+          plan: encryptNullable(input.plan),
         },
       },
     });
@@ -300,7 +301,7 @@ export async function createDoctorPatientNote({
         data: {
           patientId,
           name: input.conditionName,
-          notes: input.assessment,
+          notes: encryptNullable(input.assessment),
         },
       });
     }
@@ -310,8 +311,8 @@ export async function createDoctorPatientNote({
         data: {
           patientId,
           name: input.medicationName,
-          dosage: input.medicationDosage,
-          frequency: input.medicationFrequency,
+          dosage: encryptNullable(input.medicationDosage),
+          frequency: encryptNullable(input.medicationFrequency),
         },
       });
     }
@@ -321,7 +322,7 @@ export async function createDoctorPatientNote({
         data: {
           patientId,
           substance: input.allergySubstance,
-          reaction: input.allergyReaction,
+          reaction: encryptNullable(input.allergyReaction),
         },
       });
     }
@@ -364,7 +365,7 @@ export function toScannedPatientView(patient: DoctorPatientView, publicCode?: st
     dateOfBirth: profile?.dateOfBirth ? profile.dateOfBirth.toISOString().slice(0, 10) : null,
     sex: profile?.sex ?? null,
     bloodType: patient.bloodType,
-    emergencySummary: patient.emergencySummary,
+    emergencySummary: decryptNullable(patient.emergencySummary),
     emergencyContacts: patient.emergencyContacts.map((contact) => ({
       name: contact.name,
       relationship: contact.relationship,
@@ -372,18 +373,18 @@ export function toScannedPatientView(patient: DoctorPatientView, publicCode?: st
     })),
     allergies: patient.allergies.map((allergy) => ({
       substance: allergy.substance,
-      reaction: allergy.reaction,
+      reaction: decryptNullable(allergy.reaction),
       severity: allergy.severity,
     })),
     conditions: patient.conditions.map((condition) => ({
       name: condition.name,
       status: condition.status,
-      notes: condition.notes,
+      notes: decryptNullable(condition.notes),
     })),
     medications: patient.medications.map((medication) => ({
       name: medication.name,
-      dosage: medication.dosage,
-      frequency: medication.frequency,
+      dosage: decryptNullable(medication.dosage),
+      frequency: decryptNullable(medication.frequency),
     })),
     encounters: patient.encounters.map((encounter) => {
       const doctorProfile = encounter.doctor.user.profile;
@@ -396,8 +397,8 @@ export function toScannedPatientView(patient: DoctorPatientView, publicCode?: st
         type: encounter.type,
         status: encounter.status,
         chiefComplaint: encounter.chiefComplaint,
-        assessment: encounter.assessment,
-        plan: encounter.plan,
+        assessment: decryptNullable(encounter.assessment),
+        plan: decryptNullable(encounter.plan),
         createdAt: encounter.createdAt.toISOString(),
         doctorName,
       };

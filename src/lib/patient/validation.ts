@@ -1,12 +1,9 @@
 import { BloodType } from "@prisma/client";
 import { z } from "zod";
 
-const optionalString = z
-  .string()
-  .trim()
-  .transform((value) => (value.length > 0 ? value : null))
-  .nullable()
-  .optional();
+import { optionalTextField, textField } from "@/lib/security/validation";
+
+const optionalString = optionalTextField(2000);
 
 const optionalDecimalString = z
   .string()
@@ -19,8 +16,8 @@ const optionalDecimalString = z
   });
 
 export const patientProfileSchema = z.object({
-  firstName: z.string().trim().min(1, "First name is required."),
-  lastName: z.string().trim().min(1, "Last name is required."),
+  firstName: textField(80).pipe(z.string().min(1, "First name is required.")),
+  lastName: textField(80).pipe(z.string().min(1, "Last name is required.")),
   dateOfBirth: optionalString,
   sex: z.enum(["MALE", "FEMALE", "INTERSEX", "UNKNOWN"]).nullable().optional(),
   bloodType: z.enum(BloodType).default(BloodType.UNKNOWN),

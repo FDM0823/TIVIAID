@@ -4,6 +4,7 @@ import { notFound, redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth/session";
 import { prisma } from "@/lib/prisma";
 import type { PatientProfileInput } from "@/lib/patient/validation";
+import { decryptNullable, encryptNullable } from "@/lib/security/encryption";
 
 const patientProfileInclude = {
   user: {
@@ -158,7 +159,7 @@ export async function updatePatientProfile(userId: string, input: PatientProfile
         weightKg: toDecimal(input.weightKg),
         organDonor: input.organDonor,
         primaryLanguage: input.primaryLanguage,
-        emergencySummary: input.emergencySummary,
+        emergencySummary: encryptNullable(input.emergencySummary),
       },
     });
 
@@ -178,8 +179,8 @@ export async function updatePatientProfile(userId: string, input: PatientProfile
         data: {
           name: contactName!,
           relationship: contactRelationship!,
-          phone: contactPhone!,
-          email: input.emergencyContactEmail,
+          phone: encryptNullable(contactPhone)!,
+          email: encryptNullable(input.emergencyContactEmail),
         },
       });
     }
@@ -190,8 +191,8 @@ export async function updatePatientProfile(userId: string, input: PatientProfile
           patientId: patient.id,
           name: contactName!,
           relationship: contactRelationship!,
-          phone: contactPhone!,
-          email: input.emergencyContactEmail,
+          phone: encryptNullable(contactPhone)!,
+          email: encryptNullable(input.emergencyContactEmail),
           priority: 1,
         },
       });
@@ -221,13 +222,13 @@ function toPatientProfileView(patient: PatientWithProfile): PatientProfileView {
     weightKg: patient.weightKg?.toString() ?? null,
     organDonor: patient.organDonor,
     primaryLanguage: patient.primaryLanguage,
-    emergencySummary: patient.emergencySummary,
+    emergencySummary: decryptNullable(patient.emergencySummary),
     emergencyContact: patient.emergencyContacts[0]
       ? {
           name: patient.emergencyContacts[0].name,
           relationship: patient.emergencyContacts[0].relationship,
-          phone: patient.emergencyContacts[0].phone,
-          email: patient.emergencyContacts[0].email,
+          phone: decryptNullable(patient.emergencyContacts[0].phone) ?? "",
+          email: decryptNullable(patient.emergencyContacts[0].email),
         }
       : null,
   };

@@ -40,6 +40,13 @@ Authentication uses an HTTP-only JWT cookie named `tivaid_session`. Set
 `JWT_SECRET` in production. If it is not set locally, the app uses a development
 fallback so the starter can run immediately.
 
+## Security
+
+The API layer includes shared JSON helpers for security headers, JSON content
+type checks, request size limits, validation errors, and no-store responses.
+Sensitive clinical free-text fields are encrypted before persistence using
+AES-256-GCM with `SENSITIVE_DATA_KEY` when set, or a development fallback key.
+
 ## Patient module
 
 Authenticated patients can manage their medical profile at `/patient`.
