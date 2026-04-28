@@ -84,6 +84,12 @@ export default async function DashboardPage() {
           >
             Open patient profile
           </a>
+          <a
+            className="ml-3 mt-5 inline-flex rounded-full border border-teal-300 px-5 py-3 text-sm font-semibold text-teal-800 transition hover:border-teal-500 dark:border-teal-800 dark:text-teal-100"
+            href="/appointments"
+          >
+            Appointments
+          </a>
         </section>
       ) : null}
 
@@ -104,6 +110,12 @@ export default async function DashboardPage() {
             href="/doctor"
           >
             Open doctor dashboard
+          </a>
+          <a
+            className="ml-3 mt-5 inline-flex rounded-full border border-cyan-300 px-5 py-3 text-sm font-semibold text-cyan-800 transition hover:border-cyan-500 dark:border-cyan-800 dark:text-cyan-100"
+            href="/appointments"
+          >
+            Appointments
           </a>
         </section>
       ) : null}

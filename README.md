@@ -62,6 +62,18 @@ create encounter notes that are added to the patient's medical history.
 - `POST /api/doctor/scan`
 - `POST /api/doctor/patients/[patientId]/notes`
 
+## Appointments and prescriptions
+
+Patients and doctors can view and manage appointments at `/appointments`.
+Doctors can issue QR-verifiable digital prescriptions from the doctor dashboard.
+
+- `GET /api/appointments`
+- `POST /api/appointments`
+- `PATCH /api/appointments/[appointmentId]/status`
+- `POST /api/prescriptions`
+- `GET /api/prescriptions/[prescriptionId]/pdf`
+- Public prescription verification: `/prescriptions/verify/[publicCode]`
+
 ## Prisma
 
 The Prisma schema targets Prisma 7+ configuration conventions. Set

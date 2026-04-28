@@ -48,8 +48,11 @@ export function DoctorDashboard() {
   const [scanError, setScanError] = useState<string | null>(null);
   const [noteError, setNoteError] = useState<string | null>(null);
   const [noteMessage, setNoteMessage] = useState<string | null>(null);
+  const [prescriptionError, setPrescriptionError] = useState<string | null>(null);
+  const [prescriptionMessage, setPrescriptionMessage] = useState<string | null>(null);
   const [isScanning, setIsScanning] = useState(false);
   const [isSavingNote, setIsSavingNote] = useState(false);
+  const [isSavingPrescription, setIsSavingPrescription] = useState(false);
 
   async function handleScan(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -120,6 +123,51 @@ export function DoctorDashboard() {
     event.currentTarget.reset();
   }
 
+  async function handlePrescription(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    if (!patient) {
+      return;
+    }
+
+    setPrescriptionError(null);
+    setPrescriptionMessage(null);
+    setIsSavingPrescription(true);
+
+    const formData = new FormData(event.currentTarget);
+    const response = await fetch("/api/prescriptions", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        patientId: patient.id,
+        medicationName: String(formData.get("medicationName") ?? ""),
+        dosage: String(formData.get("dosage") ?? ""),
+        frequency: String(formData.get("frequency") ?? ""),
+        route: String(formData.get("route") ?? ""),
+        quantity: String(formData.get("quantity") ?? ""),
+        refills: Number(formData.get("refills") ?? 0),
+        instructions: String(formData.get("instructions") ?? ""),
+        expiresAt: String(formData.get("expiresAt") ?? ""),
+      }),
+    });
+
+    const body = (await response.json().catch(() => null)) as
+      | { prescription?: { id: string; verifyUrl: string }; error?: string }
+      | null;
+
+    if (!response.ok || !body?.prescription) {
+      setPrescriptionError(body?.error ?? "Unable to issue prescription.");
+      setIsSavingPrescription(false);
+      return;
+    }
+
+    setPrescriptionMessage(
+      `Prescription issued. Verify: ${body.prescription.verifyUrl}`,
+    );
+    setIsSavingPrescription(false);
+    event.currentTarget.reset();
+  }
+
   return (
     <div className="grid gap-6 lg:grid-cols-[380px_1fr]">
       <aside className="space-y-6">
@@ -169,6 +217,12 @@ export function DoctorDashboard() {
               onSubmit={handleNote}
               error={noteError}
             />
+            <PrescriptionForm
+              error={prescriptionError}
+              isSaving={isSavingPrescription}
+              message={prescriptionMessage}
+              onSubmit={handlePrescription}
+            />
             <HistoryList patient={patient} />
           </>
         ) : (
@@ -184,6 +238,61 @@ export function DoctorDashboard() {
         )}
       </section>
     </div>
+  );
+}
+
+function PrescriptionForm({
+  error,
+  isSaving,
+  message,
+  onSubmit,
+}: {
+  error: string | null;
+  isSaving: boolean;
+  message: string | null;
+  onSubmit: (event: FormEvent<HTMLFormElement>) => void;
+}) {
+  return (
+    <form
+      className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900"
+      onSubmit={onSubmit}
+    >
+      <h2 className="text-2xl font-bold text-slate-950 dark:text-white">
+        Issue digital prescription
+      </h2>
+      <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">
+        Prescriptions receive a QR verification code and PDF download endpoint.
+      </p>
+      <div className="mt-5 grid gap-4 sm:grid-cols-2">
+        <Field label="Medication" name="medicationName" required />
+        <Field label="Dosage" name="dosage" required />
+        <Field label="Frequency" name="frequency" required />
+        <Field label="Route" name="route" />
+        <Field label="Quantity" name="quantity" />
+        <Field label="Refills" name="refills" type="number" />
+        <Field label="Expires at" name="expiresAt" type="date" />
+      </div>
+      <div className="mt-4">
+        <TextArea label="Instructions" name="instructions" />
+      </div>
+      {message ? (
+        <p className="mt-4 break-all rounded-xl bg-teal-50 px-4 py-3 text-sm text-teal-800 dark:bg-teal-950 dark:text-teal-100">
+          {message}
+        </p>
+      ) : null}
+      {error ? (
+        <p className="mt-4 rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700 dark:bg-red-950/50 dark:text-red-200">
+          {error}
+        </p>
+      ) : null}
+      <button
+        className="mt-5 rounded-xl bg-cyan-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-cyan-700 disabled:cursor-not-allowed disabled:opacity-70"
+        disabled={isSaving}
+        type="submit"
+      >
+        {isSaving ? "Issuing..." : "Issue prescription"}
+      </button>
+    </form>
   );
 }
 
@@ -376,7 +485,17 @@ function Row({ label, value }: { label: string; value: string }) {
   );
 }
 
-function Field({ label, name, required }: { label: string; name: string; required?: boolean }) {
+function Field({
+  label,
+  name,
+  required,
+  type = "text",
+}: {
+  label: string;
+  name: string;
+  required?: boolean;
+  type?: string;
+}) {
   return (
     <label className="block text-sm font-medium text-slate-700 dark:text-slate-200">
       {label}
@@ -384,6 +503,8 @@ function Field({ label, name, required }: { label: string; name: string; require
         className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-950 outline-none transition focus:border-teal-500 dark:border-slate-700 dark:bg-slate-950 dark:text-white"
         name={name}
         required={required}
+        step={type === "number" ? "1" : undefined}
+        type={type}
       />
     </label>
   );

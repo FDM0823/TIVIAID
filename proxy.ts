@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { AUTH_COOKIE_NAME } from "@/lib/auth/constants";
 import { verifyAuthToken } from "@/lib/auth/jwt";
 
-const protectedRoutes = ["/dashboard", "/patient", "/doctor"];
+const protectedRoutes = ["/dashboard", "/patient", "/doctor", "/appointments"];
 
 export async function proxy(request: NextRequest) {
   const isProtectedRoute = protectedRoutes.some((route) =>
@@ -27,5 +27,5 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/patient/:path*", "/doctor/:path*"],
+  matcher: ["/dashboard/:path*", "/patient/:path*", "/doctor/:path*", "/appointments/:path*"],
 };

@@ -415,6 +415,7 @@ model QrCode {
   updatedAt       DateTime     @updatedAt
   patient         Patient?     @relation(fields: [patientId], references: [id], onDelete: Cascade)
   emergencyEvents EmergencyAccessEvent[]
+  prescriptions   Prescription[]
 
   @@index([patientId, status])
   @@index([type, status])
@@ -573,6 +574,7 @@ model Prescription {
   patientId      String
   doctorId       String
   encounterId    String?
+  verificationQrCodeId String?      @unique
   status         PrescriptionStatus @default(DRAFT)
   medicationName String
   dosage         String
@@ -588,6 +590,7 @@ model Prescription {
   patient        Patient            @relation(fields: [patientId], references: [id], onDelete: Cascade)
   doctor         Doctor             @relation(fields: [doctorId], references: [id], onDelete: Restrict)
   encounter      Encounter?         @relation(fields: [encounterId], references: [id], onDelete: SetNull)
+  verificationQrCode QrCode?        @relation(fields: [verificationQrCodeId], references: [id], onDelete: SetNull)
 
   @@index([patientId, prescribedAt])
   @@index([doctorId, prescribedAt])
