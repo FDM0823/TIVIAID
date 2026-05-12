@@ -97,6 +97,9 @@ export async function POST(request: Request) {
     }
 
     console.error("Registration failed", error);
-    return jsonError("Registration failed.", 500);
+    return jsonError(
+      "Registration database is not available yet. Use the investor demo while production credentials are configured.",
+      503,
+    );
   }
 }

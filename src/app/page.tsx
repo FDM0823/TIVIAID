@@ -1,96 +1,108 @@
 const metrics = [
-  { label: "Emergency QR access", value: "24/7" },
-  { label: "Core care modules", value: "8" },
-  { label: "Audit coverage", value: "100%" },
+  { label: "Acceso QR de emergencia", value: "24/7" },
+  { label: "Modulos de atencion", value: "8" },
+  { label: "Cobertura de auditoria", value: "100%" },
 ];
 
 const modules = [
-  "Patient profiles",
-  "Doctor verification",
-  "Medical history",
-  "QR emergency summary",
-  "Consent sharing",
-  "Appointments",
-  "Prescriptions",
-  "Audit logs",
+  "Perfiles de pacientes",
+  "Verificacion medica",
+  "Historial medico",
+  "Resumen QR de emergencia",
+  "Consentimiento",
+  "Citas",
+  "Recetas",
+  "Auditoria",
 ];
 
 const sentinelFeatures = [
   {
-    title: "Patient readiness score",
+    title: "Score del paciente",
     description:
-      "Patients see whether their QR profile is emergency-ready before a crisis happens.",
+      "El paciente ve si su perfil QR esta listo antes de una emergencia.",
   },
   {
-    title: "Doctor scan intelligence",
+    title: "Inteligencia para doctores",
     description:
-      "Doctors convert a QR scan into risk flags, care priorities, and clinical context.",
+      "El doctor convierte un escaneo QR en alertas, prioridades y contexto clinico.",
   },
   {
-    title: "Copy-ready SBAR handoff",
+    title: "Resumen SBAR copiable",
     description:
-      "A structured brief helps transfer critical context quickly between clinicians.",
+      "Un resumen estructurado acelera el traspaso clinico con informacion critica.",
   },
 ];
 
 export default function Home() {
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-6xl flex-col px-6 py-10 sm:px-8 lg:px-10">
-      <nav className="flex items-center justify-between rounded-full border border-white/10 bg-white/70 px-5 py-3 shadow-sm backdrop-blur dark:bg-slate-950/70">
+      <nav className="flex items-center justify-between rounded-full border border-slate-200 bg-white/85 px-5 py-3 shadow-sm backdrop-blur">
         <div className="flex items-center gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-full bg-teal-600 font-bold text-white">
             T
           </div>
           <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.25em] text-teal-700 dark:text-teal-300">
+            <p className="text-sm font-semibold uppercase tracking-[0.25em] text-teal-700">
               TivAid
             </p>
-            <p className="text-xs text-slate-500 dark:text-slate-400">
-              Connected healthcare platform
+            <p className="text-xs text-slate-500">
+              Plataforma de atencion medica conectada
             </p>
           </div>
         </div>
         <div className="flex items-center gap-2">
           <a
-            className="rounded-full border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-800 transition hover:border-teal-400 hover:text-teal-700 dark:border-slate-700 dark:text-slate-100"
-            href="/login"
+            className="hidden rounded-full bg-cyan-100 px-4 py-2 text-sm font-semibold text-cyan-900 transition hover:bg-cyan-200 sm:inline-flex"
+            href="/demo"
           >
-            Log in
+            Prueba de inversores
           </a>
           <a
-            className="rounded-full bg-slate-950 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800 dark:bg-white dark:text-slate-950 dark:hover:bg-slate-200"
+            className="rounded-full border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-800 transition hover:border-teal-400 hover:text-teal-700"
+            href="/login"
+          >
+            Acceso
+          </a>
+          <a
+            className="rounded-full bg-slate-950 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800"
             href="/register"
           >
-            Register
+            Registro
           </a>
         </div>
       </nav>
 
       <section className="grid flex-1 items-center gap-10 py-16 lg:grid-cols-[1.1fr_0.9fr]">
         <div>
-          <p className="mb-4 inline-flex rounded-full border border-teal-200 bg-teal-50 px-4 py-2 text-sm font-medium text-teal-800 dark:border-teal-900 dark:bg-teal-950 dark:text-teal-200">
-            MVP foundation initialized with Next.js, Tailwind, and Prisma.
+          <p className="mb-4 inline-flex rounded-full border border-teal-200 bg-teal-50 px-4 py-2 text-sm font-medium text-teal-800">
+            Plataforma MVP inicializada con Next.js, Tailwind y Prisma.
           </p>
-          <h1 className="text-5xl font-bold tracking-tight text-slate-950 dark:text-white sm:text-6xl">
-            Healthcare records, doctor workflows, and emergency access in one secure app.
+          <h1 className="text-5xl font-bold tracking-tight text-slate-950 sm:text-6xl">
+            Historiales medicos, flujos de doctores y acceso a emergencias en una app segura.
           </h1>
-          <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-600 dark:text-slate-300">
-            TivAid helps patients manage longitudinal medical history, lets verified doctors
-            coordinate care, and gives responders QR-based access to critical emergency
-            information.
+          <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-700">
+            TivAid ayuda a pacientes a gestionar su historial clinico, permite que
+            doctores verificados coordinen atencion y da acceso QR a informacion
+            critica durante emergencias.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <a
               className="rounded-full bg-teal-600 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-teal-700"
               href="/dashboard"
             >
-              View dashboard
+              Ver panel de control
             </a>
             <a
-              className="rounded-full border border-slate-300 px-6 py-3 text-sm font-semibold text-slate-800 transition hover:border-teal-400 hover:text-teal-700 dark:border-slate-700 dark:text-slate-100"
+              className="rounded-full bg-cyan-600 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-cyan-700"
+              href="/demo"
+            >
+              Prueba de inversores
+            </a>
+            <a
+              className="rounded-full border border-slate-300 px-6 py-3 text-sm font-semibold text-slate-800 transition hover:border-teal-400 hover:text-teal-700"
               href="https://github.com/FDM0823/TIVIAID/blob/main/docs/architecture.md"
             >
-              Architecture docs
+              Documentos de arquitectura
             </a>
           </div>
         </div>
@@ -98,12 +110,12 @@ export default function Home() {
         <div className="rounded-[2rem] border border-white/15 bg-slate-950 p-6 text-white shadow-2xl">
           <div className="rounded-[1.5rem] bg-gradient-to-br from-teal-500 to-cyan-500 p-5">
             <p className="text-sm font-medium uppercase tracking-[0.3em] text-teal-950/70">
-              Emergency card
+              Tarjeta de emergencia
             </p>
-            <h2 className="mt-6 text-3xl font-bold">Patient QR Summary</h2>
+            <h2 className="mt-6 text-3xl font-bold">Resumen del codigo QR del paciente</h2>
             <p className="mt-3 text-sm leading-6 text-teal-950/80">
-              Opaque QR tokens resolve server-side to limited, audited emergency
-              information only.
+              Los codigos QR opacos se resuelven en el servidor y solo muestran
+              informacion limitada, auditada y relevante para emergencias.
             </p>
           </div>
           <div className="mt-6 grid grid-cols-3 gap-3">
@@ -121,38 +133,36 @@ export default function Home() {
         {modules.map((module) => (
           <div
             key={module}
-            className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900"
+            className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"
           >
-            <p className="font-semibold text-slate-950 dark:text-white">{module}</p>
+            <p className="font-semibold text-slate-950">{module}</p>
           </div>
         ))}
       </section>
 
-      <section className="mb-12 rounded-[2rem] border border-cyan-200 bg-cyan-50 p-6 shadow-sm dark:border-cyan-900 dark:bg-cyan-950/30">
-        <p className="text-sm font-semibold uppercase tracking-[0.25em] text-cyan-800 dark:text-cyan-200">
-          New for emergency care
+      <section className="mb-12 rounded-[2rem] border border-cyan-200 bg-cyan-50 p-6 shadow-sm">
+        <p className="text-sm font-semibold uppercase tracking-[0.25em] text-cyan-800">
+          Nuevo para atencion de emergencia
         </p>
         <div className="mt-4 grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
           <div>
-            <h2 className="text-3xl font-bold tracking-tight text-slate-950 dark:text-white">
-              TivAid Sentinel turns a QR scan into action.
+            <h2 className="text-3xl font-bold tracking-tight text-slate-950">
+              TivAid Sentinel convierte un escaneo QR en accion.
             </h2>
-            <p className="mt-4 text-sm leading-6 text-slate-600 dark:text-slate-300">
-              The patient app now scores emergency readiness, while the doctor app
-              highlights clinical signals and prepares a handoff brief from the
-              same privacy-limited QR workflow.
+            <p className="mt-4 text-sm leading-6 text-slate-700">
+              La app del paciente ahora calcula preparacion de emergencia, mientras
+              la app del doctor destaca senales clinicas y prepara un resumen SBAR
+              desde el mismo flujo QR con privacidad limitada.
             </p>
           </div>
           <div className="grid gap-3 sm:grid-cols-3">
             {sentinelFeatures.map((feature) => (
               <article
-                className="rounded-2xl border border-white/70 bg-white p-4 dark:border-slate-800 dark:bg-slate-900"
+                className="rounded-2xl border border-white/70 bg-white p-4"
                 key={feature.title}
               >
-                <h3 className="font-semibold text-slate-950 dark:text-white">
-                  {feature.title}
-                </h3>
-                <p className="mt-2 text-xs leading-5 text-slate-600 dark:text-slate-300">
+                <h3 className="font-semibold text-slate-950">{feature.title}</h3>
+                <p className="mt-2 text-xs leading-5 text-slate-700">
                   {feature.description}
                 </p>
               </article>

@@ -70,6 +70,10 @@ export async function POST(request: Request) {
       return jsonError(error.message, error.status);
     }
 
-    return jsonError("Unable to log in.", 500);
+    console.error("Login failed", error);
+    return jsonError(
+      "Login database is not available yet. Use the investor demo while production credentials are configured.",
+      503,
+    );
   }
 }

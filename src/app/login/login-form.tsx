@@ -83,6 +83,21 @@ export function LoginForm() {
         >
           {isSubmitting ? "Signing in..." : "Sign in"}
         </button>
+        <div className="rounded-2xl border border-cyan-200 bg-cyan-50 p-4 text-center dark:border-cyan-900 dark:bg-cyan-950/40">
+          <p className="text-sm font-semibold text-cyan-950 dark:text-cyan-100">
+            Competition demo
+          </p>
+          <p className="mt-1 text-xs leading-5 text-cyan-800 dark:text-cyan-200">
+            If production database access is still being configured, open the investor
+            demo to show the full patient and doctor experience.
+          </p>
+          <a
+            className="mt-3 inline-flex rounded-full bg-cyan-600 px-4 py-2 text-xs font-semibold text-white transition hover:bg-cyan-700"
+            href="/demo"
+          >
+            Open investor demo
+          </a>
+        </div>
       </form>
     </AuthCard>
   );
