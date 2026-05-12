@@ -15,6 +15,24 @@ const modules = [
   "Audit logs",
 ];
 
+const sentinelFeatures = [
+  {
+    title: "Patient readiness score",
+    description:
+      "Patients see whether their QR profile is emergency-ready before a crisis happens.",
+  },
+  {
+    title: "Doctor scan intelligence",
+    description:
+      "Doctors convert a QR scan into risk flags, care priorities, and clinical context.",
+  },
+  {
+    title: "Copy-ready SBAR handoff",
+    description:
+      "A structured brief helps transfer critical context quickly between clinicians.",
+  },
+];
+
 export default function Home() {
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-6xl flex-col px-6 py-10 sm:px-8 lg:px-10">
@@ -108,6 +126,39 @@ export default function Home() {
             <p className="font-semibold text-slate-950 dark:text-white">{module}</p>
           </div>
         ))}
+      </section>
+
+      <section className="mb-12 rounded-[2rem] border border-cyan-200 bg-cyan-50 p-6 shadow-sm dark:border-cyan-900 dark:bg-cyan-950/30">
+        <p className="text-sm font-semibold uppercase tracking-[0.25em] text-cyan-800 dark:text-cyan-200">
+          New for emergency care
+        </p>
+        <div className="mt-4 grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
+          <div>
+            <h2 className="text-3xl font-bold tracking-tight text-slate-950 dark:text-white">
+              TivAid Sentinel turns a QR scan into action.
+            </h2>
+            <p className="mt-4 text-sm leading-6 text-slate-600 dark:text-slate-300">
+              The patient app now scores emergency readiness, while the doctor app
+              highlights clinical signals and prepares a handoff brief from the
+              same privacy-limited QR workflow.
+            </p>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-3">
+            {sentinelFeatures.map((feature) => (
+              <article
+                className="rounded-2xl border border-white/70 bg-white p-4 dark:border-slate-800 dark:bg-slate-900"
+                key={feature.title}
+              >
+                <h3 className="font-semibold text-slate-950 dark:text-white">
+                  {feature.title}
+                </h3>
+                <p className="mt-2 text-xs leading-5 text-slate-600 dark:text-slate-300">
+                  {feature.description}
+                </p>
+              </article>
+            ))}
+          </div>
+        </div>
       </section>
     </main>
   );
