@@ -1,14 +1,24 @@
 import Link from "next/link";
 
+import { EmergencyReadinessCard } from "@/components/patient/emergency-readiness-card";
 import { EmergencyQrCard } from "@/components/patient/emergency-qr-card";
 import { PatientProfileForm } from "@/components/patient/patient-profile-form";
-import { getPatientProfile, requirePatientUser } from "@/lib/patient/data";
-import { createEmergencyQrImage, getEmergencyQrUrl, getOrCreateEmergencyQrCode } from "@/lib/patient/qr";
+import {
+  getPatientEmergencyReadiness,
+  getPatientProfile,
+  requirePatientUser,
+} from "@/lib/patient/data";
+import {
+  createEmergencyQrImage,
+  getEmergencyQrUrl,
+  getOrCreateEmergencyQrCode,
+} from "@/lib/patient/qr";
 
 export default async function PatientProfilePage() {
   const { patient, user } = await requirePatientUser();
   const profile = await getPatientProfile(user.id);
   const qrCode = await getOrCreateEmergencyQrCode(patient.id);
+  const readiness = await getPatientEmergencyReadiness(user.id);
   const emergencyUrl = getEmergencyQrUrl(qrCode.publicCode);
   const qrImageDataUrl = await createEmergencyQrImage(qrCode.publicCode);
 
@@ -31,10 +41,13 @@ export default async function PatientProfilePage() {
 
       <div className="mt-10 grid gap-6 lg:grid-cols-[1fr_360px]">
         {profile ? <PatientProfileForm profile={profile} /> : null}
-        <EmergencyQrCard
-          emergencyUrl={emergencyUrl}
-          qrImageDataUrl={qrImageDataUrl}
-        />
+        <aside className="space-y-6">
+          <EmergencyQrCard
+            emergencyUrl={emergencyUrl}
+            qrImageDataUrl={qrImageDataUrl}
+          />
+          {readiness ? <EmergencyReadinessCard readiness={readiness} /> : null}
+        </aside>
       </div>
     </main>
   );

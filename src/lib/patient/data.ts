@@ -42,6 +42,36 @@ export type PatientProfileView = {
   } | null;
 };
 
+export type PatientEmergencyReadinessView = {
+  activeAllergyCount: number;
+  activeConditionCount: number;
+  activeMedicationCount: number;
+  bloodType: string;
+  dateOfBirth: string | null;
+  emergencyContact: {
+    name: string;
+    phone: string;
+    relationship: string;
+  } | null;
+  emergencySummary: string | null;
+  heightCm: string | null;
+  patientName: string;
+  primaryLanguage: string | null;
+  qrCode: {
+    createdAt: string;
+    lastScannedAt: string | null;
+    publicCode: string;
+  } | null;
+  recentAccessEvents: Array<{
+    accessReason: string | null;
+    id: string;
+    openedAt: string;
+    requesterRole: string | null;
+    status: string;
+  }>;
+  weightKg: string | null;
+};
+
 export type PatientProfile = Awaited<ReturnType<typeof getPatientProfileForCurrentUser>>;
 
 export async function requirePatientUser() {
@@ -128,6 +158,91 @@ export async function getPatientProfile(userId: string): Promise<PatientProfileV
   });
 
   return patient ? toPatientProfileView(patient) : null;
+}
+
+export async function getPatientEmergencyReadiness(
+  userId: string,
+): Promise<PatientEmergencyReadinessView | null> {
+  const patient = await prisma.patient.findUnique({
+    where: { userId },
+    include: {
+      user: {
+        include: {
+          profile: true,
+        },
+      },
+      emergencyContacts: {
+        orderBy: [{ priority: "asc" }, { createdAt: "asc" }],
+        take: 1,
+      },
+      allergies: {
+        where: { resolvedAt: null },
+        select: { id: true },
+      },
+      conditions: {
+        where: { status: { in: ["ACTIVE", "REMISSION"] } },
+        select: { id: true },
+      },
+      medications: {
+        where: { active: true },
+        select: { id: true },
+      },
+      qrCodes: {
+        where: {
+          type: "PATIENT_EMERGENCY",
+          status: "ACTIVE",
+        },
+        orderBy: { createdAt: "desc" },
+        take: 1,
+      },
+      emergencyAccessEvents: {
+        orderBy: { openedAt: "desc" },
+        take: 4,
+      },
+    },
+  });
+
+  if (!patient) {
+    return null;
+  }
+
+  const profile = patient.user.profile;
+  const contact = patient.emergencyContacts[0];
+  const qrCode = patient.qrCodes[0];
+
+  return {
+    activeAllergyCount: patient.allergies.length,
+    activeConditionCount: patient.conditions.length,
+    activeMedicationCount: patient.medications.length,
+    bloodType: patient.bloodType,
+    dateOfBirth: profile?.dateOfBirth ? profile.dateOfBirth.toISOString().slice(0, 10) : null,
+    emergencyContact: contact
+      ? {
+          name: contact.name,
+          phone: decryptNullable(contact.phone) ?? "",
+          relationship: contact.relationship,
+        }
+      : null,
+    emergencySummary: decryptNullable(patient.emergencySummary),
+    heightCm: patient.heightCm?.toString() ?? null,
+    patientName: profile ? `${profile.firstName} ${profile.lastName}` : "TivAid patient",
+    primaryLanguage: patient.primaryLanguage,
+    qrCode: qrCode
+      ? {
+          createdAt: qrCode.createdAt.toISOString(),
+          lastScannedAt: qrCode.lastScannedAt?.toISOString() ?? null,
+          publicCode: qrCode.publicCode,
+        }
+      : null,
+    recentAccessEvents: patient.emergencyAccessEvents.map((event) => ({
+      accessReason: event.accessReason,
+      id: event.id,
+      openedAt: event.openedAt.toISOString(),
+      requesterRole: event.requesterRole,
+      status: event.status,
+    })),
+    weightKg: patient.weightKg?.toString() ?? null,
+  };
 }
 
 export async function updatePatientProfile(userId: string, input: PatientProfileInput) {

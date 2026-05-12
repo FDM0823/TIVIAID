@@ -1,6 +1,8 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useMemo, useState } from "react";
+
+import { buildClinicalSignals, formatBloodType } from "@/lib/emergency/intelligence";
 
 type ScannedPatient = {
   id: string;
@@ -53,6 +55,11 @@ export function DoctorDashboard() {
   const [isScanning, setIsScanning] = useState(false);
   const [isSavingNote, setIsSavingNote] = useState(false);
   const [isSavingPrescription, setIsSavingPrescription] = useState(false);
+  const [handoffCopied, setHandoffCopied] = useState(false);
+  const clinicalSignals = useMemo(
+    () => (patient ? buildClinicalSignals(patient) : null),
+    [patient],
+  );
 
   async function handleScan(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -78,6 +85,7 @@ export function DoctorDashboard() {
     }
 
     setPatient(body.patient);
+    setHandoffCopied(false);
     setIsScanning(false);
   }
 
@@ -118,9 +126,15 @@ export function DoctorDashboard() {
     }
 
     setPatient(body.patient);
+    setHandoffCopied(false);
     setNoteMessage("Patient history updated.");
     setIsSavingNote(false);
     event.currentTarget.reset();
+  }
+
+  async function handleCopyHandoff(summary: string) {
+    await navigator.clipboard.writeText(summary);
+    setHandoffCopied(true);
   }
 
   async function handlePrescription(event: FormEvent<HTMLFormElement>) {
@@ -211,6 +225,13 @@ export function DoctorDashboard() {
       <section className="space-y-6">
         {patient ? (
           <>
+            {clinicalSignals ? (
+              <ClinicalSignalPanel
+                copied={handoffCopied}
+                intelligence={clinicalSignals}
+                onCopy={handleCopyHandoff}
+              />
+            ) : null}
             <NoteForm
               isSaving={isSavingNote}
               message={noteMessage}
@@ -238,6 +259,102 @@ export function DoctorDashboard() {
         )}
       </section>
     </div>
+  );
+}
+
+type ClinicalSignalResult = ReturnType<typeof buildClinicalSignals>;
+
+const riskStyles = {
+  critical:
+    "border-red-200 bg-red-50 text-red-800 dark:border-red-900 dark:bg-red-950/40 dark:text-red-100",
+  stable:
+    "border-teal-200 bg-teal-50 text-teal-800 dark:border-teal-900 dark:bg-teal-950/40 dark:text-teal-100",
+  watch:
+    "border-amber-200 bg-amber-50 text-amber-800 dark:border-amber-900 dark:bg-amber-950/40 dark:text-amber-100",
+} satisfies Record<ClinicalSignalResult["riskLevel"], string>;
+
+const signalStyles = {
+  critical:
+    "border-red-200 bg-red-50 text-red-900 dark:border-red-900 dark:bg-red-950/30 dark:text-red-100",
+  stable:
+    "border-slate-200 bg-slate-50 text-slate-700 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-200",
+  warning:
+    "border-amber-200 bg-amber-50 text-amber-900 dark:border-amber-900 dark:bg-amber-950/30 dark:text-amber-100",
+} satisfies Record<ClinicalSignalResult["signals"][number]["level"], string>;
+
+function ClinicalSignalPanel({
+  copied,
+  intelligence,
+  onCopy,
+}: {
+  copied: boolean;
+  intelligence: ClinicalSignalResult;
+  onCopy: (summary: string) => void;
+}) {
+  return (
+    <section className="rounded-3xl border border-cyan-200 bg-white p-6 shadow-sm dark:border-cyan-900 dark:bg-slate-900">
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-cyan-700 dark:text-cyan-300">
+            TivAid Sentinel
+          </p>
+          <h2 className="mt-3 text-2xl font-bold text-slate-950 dark:text-white">
+            Scan intelligence and SBAR handoff
+          </h2>
+          <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600 dark:text-slate-300">
+            The QR scan is converted into triage signals, care priorities, and a
+            copy-ready handoff note for the next clinician.
+          </p>
+        </div>
+        <div
+          className={`rounded-2xl border px-4 py-3 text-sm font-bold uppercase tracking-[0.16em] ${riskStyles[intelligence.riskLevel]}`}
+        >
+          {intelligence.riskLevel === "critical"
+            ? "Critical flags"
+            : intelligence.riskLevel === "watch"
+              ? "Watch closely"
+              : "Stable profile"}
+        </div>
+      </div>
+
+      <div className="mt-5 grid gap-3 lg:grid-cols-3">
+        {intelligence.signals.map((signal) => (
+          <article
+            className={`rounded-2xl border p-4 ${signalStyles[signal.level]}`}
+            key={`${signal.label}-${signal.detail}`}
+          >
+            <p className="text-sm font-semibold">{signal.label}</p>
+            <p className="mt-2 text-xs leading-5 opacity-90">{signal.detail}</p>
+          </article>
+        ))}
+      </div>
+
+      <div className="mt-5 grid gap-4 lg:grid-cols-[1fr_1.2fr]">
+        <div className="rounded-2xl bg-slate-50 p-4 dark:bg-slate-950">
+          <p className="font-semibold text-slate-950 dark:text-white">Top care priorities</p>
+          <ol className="mt-3 list-decimal space-y-2 pl-5 text-sm text-slate-600 dark:text-slate-300">
+            {intelligence.topPriorities.map((priority) => (
+              <li key={priority}>{priority}</li>
+            ))}
+          </ol>
+        </div>
+        <div className="rounded-2xl border border-slate-200 p-4 dark:border-slate-800">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <p className="font-semibold text-slate-950 dark:text-white">SBAR handoff brief</p>
+            <button
+              className="rounded-full border border-cyan-300 px-4 py-2 text-xs font-semibold text-cyan-800 transition hover:border-cyan-500 dark:border-cyan-800 dark:text-cyan-100"
+              onClick={() => onCopy(intelligence.handoffSummary)}
+              type="button"
+            >
+              {copied ? "Copied" : "Copy brief"}
+            </button>
+          </div>
+          <pre className="mt-3 whitespace-pre-wrap rounded-xl bg-slate-950 p-4 text-xs leading-5 text-slate-100">
+            {intelligence.handoffSummary}
+          </pre>
+        </div>
+      </div>
+    </section>
   );
 }
 
@@ -531,6 +648,3 @@ function TextArea({
   );
 }
 
-function formatBloodType(value: string) {
-  return value.replace("_POSITIVE", "+").replace("_NEGATIVE", "-").replace("_", " ");
-}

@@ -1,7 +1,11 @@
 import { ZodError } from "zod";
 
 import { secureJson } from "@/lib/api/security";
-import { getCurrentDoctor, scanPatientByPublicCode } from "@/lib/doctor/data";
+import {
+  getCurrentDoctor,
+  scanPatientByPublicCode,
+  toScannedPatientView,
+} from "@/lib/doctor/data";
 import { scanPatientQrSchema } from "@/lib/doctor/validation";
 
 export async function POST(request: Request) {
@@ -22,7 +26,7 @@ export async function POST(request: Request) {
       );
     }
 
-    return secureJson({ patient });
+    return secureJson({ patient: toScannedPatientView(patient, payload.publicCode) });
   } catch (error) {
     if (error instanceof ZodError) {
       return secureJson(

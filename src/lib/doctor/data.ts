@@ -84,8 +84,9 @@ export async function getDoctorDashboardData() {
 }
 
 export async function scanPatientByPublicCode(doctorId: string, publicCode: string) {
+  const normalizedPublicCode = extractPublicCode(publicCode);
   const qrCode = await prisma.qrCode.findUnique({
-    where: { publicCode },
+    where: { publicCode: normalizedPublicCode },
     include: {
       patient: {
         include: {
@@ -175,6 +176,14 @@ export async function scanPatientByPublicCode(doctorId: string, publicCode: stri
   ]);
 
   return qrCode.patient;
+}
+
+function extractPublicCode(value: string) {
+  const trimmed = value.trim();
+  const withoutQuery = trimmed.split(/[?#]/)[0] ?? trimmed;
+  const segments = withoutQuery.split("/").filter(Boolean);
+
+  return segments.at(-1) ?? trimmed;
 }
 
 export async function getDoctorPatient(doctorId: string, patientId: string) {
@@ -369,7 +378,7 @@ export function toScannedPatientView(patient: DoctorPatientView, publicCode?: st
     emergencyContacts: patient.emergencyContacts.map((contact) => ({
       name: contact.name,
       relationship: contact.relationship,
-      phone: contact.phone,
+      phone: decryptNullable(contact.phone) ?? "",
     })),
     allergies: patient.allergies.map((allergy) => ({
       substance: allergy.substance,

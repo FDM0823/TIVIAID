@@ -1,8 +1,17 @@
 import { ZodError } from "zod";
 
-import { getCurrentDoctor, createDoctorPatientNote } from "@/lib/doctor/data";
+import {
+  createDoctorPatientNote,
+  getCurrentDoctor,
+  toScannedPatientView,
+} from "@/lib/doctor/data";
 import { doctorNoteSchema } from "@/lib/doctor/validation";
-import { jsonError, jsonOk, parseJsonBody, validationError } from "@/lib/api/security";
+import {
+  jsonError,
+  jsonOk,
+  parseJsonBody,
+  validationError,
+} from "@/lib/api/security";
 
 type NotesRouteContext = {
   params: Promise<{
@@ -36,7 +45,7 @@ export async function POST(request: Request, context: NotesRouteContext) {
       return jsonError("Patient not found.", 404);
     }
 
-    return jsonOk({ encounter: result }, { status: 201 });
+    return jsonOk({ patient: toScannedPatientView(result) }, { status: 201 });
   } catch (error) {
     if (error instanceof ZodError) {
       return validationError(error);
