@@ -12,14 +12,14 @@ export const DEFAULT_DEMO_CREDENTIALS = [
     kind: "patient",
     label: "Paciente demo",
     password: "Paciente-PBof6qC-LUNj-2026",
-    targetPath: "/patient",
+    targetPath: "/patient-demo",
   },
   {
     email: "doctor.demo.0fc9@tivaid.app",
     kind: "doctor",
     label: "Doctor demo",
     password: "Doctor-G-DolYkYpQOa-2026",
-    targetPath: "/doctor",
+    targetPath: "/doctor-demo",
   },
   {
     email: "lab.demo.0fc9@tivaid.app",

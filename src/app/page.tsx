@@ -66,13 +66,13 @@ export default function Home() {
           </a>
           <a
             className="hidden rounded-full border border-teal-300 px-4 py-2 text-sm font-semibold text-teal-800 transition hover:border-teal-500 xl:inline-flex"
-            href="/patient"
+            href="/patient-demo"
           >
             App paciente
           </a>
           <a
             className="hidden rounded-full border border-cyan-300 px-4 py-2 text-sm font-semibold text-cyan-800 transition hover:border-cyan-500 xl:inline-flex"
-            href="/doctor"
+            href="/doctor-demo"
           >
             App doctor
           </a>
@@ -113,13 +113,13 @@ export default function Home() {
             </a>
             <a
               className="rounded-full border border-teal-300 px-6 py-3 text-sm font-semibold text-teal-800 transition hover:border-teal-500 hover:text-teal-700"
-              href="/patient"
+              href="/patient-demo"
             >
               App paciente
             </a>
             <a
               className="rounded-full border border-cyan-300 px-6 py-3 text-sm font-semibold text-cyan-800 transition hover:border-cyan-500 hover:text-cyan-700"
-              href="/doctor"
+              href="/doctor-demo"
             >
               App doctor
             </a>
@@ -191,7 +191,7 @@ export default function Home() {
           </p>
           <a
             className="mt-5 inline-flex rounded-full bg-teal-600 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-teal-700"
-            href="/patient"
+            href="/patient-demo"
           >
             Abrir app paciente
           </a>
@@ -209,7 +209,7 @@ export default function Home() {
           </p>
           <a
             className="mt-5 inline-flex rounded-full bg-cyan-600 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-cyan-700"
-            href="/doctor"
+            href="/doctor-demo"
           >
             Abrir app doctor
           </a>
