@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { FormEvent, useState } from "react";
 
 import { AuthCard } from "@/components/auth/auth-card";
+import { DEFAULT_DEMO_CREDENTIALS } from "@/lib/auth/demo-credentials";
 
 export function LoginForm() {
   const router = useRouter();
@@ -22,8 +23,8 @@ export function LoginForm() {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        email: String(formData.get("loginIdentifier") ?? ""),
-        password: String(formData.get("loginSecret") ?? ""),
+        email: String(formData.get("email") ?? ""),
+        password: String(formData.get("password") ?? ""),
       }),
     });
 
@@ -49,38 +50,28 @@ export function LoginForm() {
       subtitle="Sign in to access protected TivAid dashboards."
       title="Welcome back"
     >
-      <form autoComplete="off" className="space-y-4" onSubmit={handleSubmit}>
+      <form className="space-y-4" onSubmit={handleSubmit}>
         <label className="block text-sm font-medium text-slate-700 dark:text-slate-200">
           Email
           <input
-            aria-autocomplete="none"
-            autoComplete="off"
+            autoComplete="email"
             className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-950 outline-none transition focus:border-teal-500 dark:border-slate-700 dark:bg-slate-950 dark:text-white"
-            data-1p-ignore="true"
-            data-lpignore="true"
-            name="loginIdentifier"
+            name="email"
             required
-            spellCheck={false}
             type="email"
           />
         </label>
         <label className="block text-sm font-medium text-slate-700 dark:text-slate-200">
           Password
           <input
-            aria-autocomplete="none"
-            autoComplete="new-password"
+            autoComplete="current-password"
             className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-950 outline-none transition focus:border-teal-500 dark:border-slate-700 dark:bg-slate-950 dark:text-white"
-            data-1p-ignore="true"
-            data-lpignore="true"
             minLength={8}
-            name="loginSecret"
+            name="password"
             required
             type="password"
           />
         </label>
-        <p className="text-xs leading-5 text-slate-500 dark:text-slate-400">
-          For security on shared demo links, saved credentials are not prefilled.
-        </p>
         {error ? (
           <p className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700 dark:bg-red-950/50 dark:text-red-200">
             {error}
@@ -107,6 +98,40 @@ export function LoginForm() {
           >
             Open investor demo
           </a>
+        </div>
+        <div className="rounded-2xl border border-teal-200 bg-teal-50 p-4 dark:border-teal-900 dark:bg-teal-950/40">
+          <p className="text-sm font-semibold text-teal-950 dark:text-teal-100">
+            Cuentas demo funcionales
+          </p>
+          <p className="mt-1 text-xs leading-5 text-teal-800 dark:text-teal-200">
+            Usa estas credenciales para entrar a las apps reales con datos demo.
+          </p>
+          <div className="mt-3 space-y-3 text-left">
+            {DEFAULT_DEMO_CREDENTIALS.map((credential) => (
+              <div
+                className="rounded-xl border border-white/70 bg-white p-3 text-xs text-slate-700 dark:border-teal-900 dark:bg-slate-950 dark:text-slate-200"
+                key={credential.email}
+              >
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <p className="font-semibold text-slate-950 dark:text-white">
+                    {credential.label}
+                  </p>
+                  <a
+                    className="rounded-full bg-teal-600 px-3 py-1 font-semibold text-white transition hover:bg-teal-700"
+                    href={credential.targetPath}
+                  >
+                    Abrir app
+                  </a>
+                </div>
+                <p className="mt-2 break-all">
+                  <span className="font-semibold">Email:</span> {credential.email}
+                </p>
+                <p className="mt-1 break-all">
+                  <span className="font-semibold">Clave:</span> {credential.password}
+                </p>
+              </div>
+            ))}
+          </div>
         </div>
       </form>
     </AuthCard>

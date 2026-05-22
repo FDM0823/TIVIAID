@@ -1,7 +1,8 @@
-import type { Prisma } from "@prisma/client";
+import type { Prisma, Sex } from "@prisma/client";
 
 import { hashPassword } from "@/lib/auth/password";
 import type { AuthRole } from "@/lib/auth/constants";
+import { DEFAULT_DEMO_CREDENTIALS } from "@/lib/auth/demo-credentials";
 import { prisma } from "@/lib/prisma";
 
 type DemoAccountKind = "patient" | "doctor" | "lab";
@@ -21,16 +22,16 @@ export type ConfiguredDemoAccount = DemoAccountDefinition & {
 
 const demoAccountDefinitions: DemoAccountDefinition[] = [
   {
-    firstName: "Paciente",
+    firstName: "Camila",
     kind: "patient",
-    lastName: "Demo",
+    lastName: "Torres",
     prefix: "DEMO_PATIENT",
     role: "PATIENT",
   },
   {
-    firstName: "Doctor",
+    firstName: "Valeria",
     kind: "doctor",
-    lastName: "Demo",
+    lastName: "Cruz",
     prefix: "DEMO_DOCTOR",
     role: "DOCTOR",
   },
@@ -44,13 +45,17 @@ const demoAccountDefinitions: DemoAccountDefinition[] = [
 ];
 
 export function getConfiguredDemoAccounts() {
-  if (process.env.DEMO_ACCOUNTS_ENABLED !== "true") {
+  if (process.env.DEMO_ACCOUNTS_ENABLED === "false") {
     return [];
   }
 
   return demoAccountDefinitions.flatMap((definition) => {
-    const email = process.env[`${definition.prefix}_EMAIL`]?.trim().toLowerCase();
-    const password = process.env[`${definition.prefix}_PASSWORD`]?.trim();
+    const fallback = DEFAULT_DEMO_CREDENTIALS.find(
+      (credential) => credential.kind === definition.kind,
+    );
+    const email =
+      process.env[`${definition.prefix}_EMAIL`]?.trim().toLowerCase() ?? fallback?.email;
+    const password = process.env[`${definition.prefix}_PASSWORD`]?.trim() ?? fallback?.password;
 
     if (!email || !password) {
       return [];
@@ -66,7 +71,7 @@ export function findConfiguredDemoAccount(email: string) {
   return getConfiguredDemoAccounts().find((account) => account.email === normalizedEmail);
 }
 
-export async function upsertDemoAccount(account: ConfiguredDemoAccount) {
+export async function upsertDemoAccount(account: ConfiguredDemoAccount): Promise<DemoUser> {
   const passwordHash = await hashPassword(account.password);
 
   const user = await prisma.user.upsert({
@@ -77,14 +82,8 @@ export async function upsertDemoAccount(account: ConfiguredDemoAccount) {
       status: "ACTIVE",
       profile: {
         upsert: {
-          create: {
-            firstName: account.firstName,
-            lastName: account.lastName,
-          },
-          update: {
-            firstName: account.firstName,
-            lastName: account.lastName,
-          },
+          create: buildDemoProfile(account),
+          update: buildDemoProfile(account),
         },
       },
     },
@@ -94,32 +93,14 @@ export async function upsertDemoAccount(account: ConfiguredDemoAccount) {
       role: account.role,
       status: "ACTIVE",
       profile: {
-        create: {
-          firstName: account.firstName,
-          lastName: account.lastName,
-        },
+        create: buildDemoProfile(account),
       },
     },
     include: { profile: true },
   });
 
   if (account.role === "PATIENT") {
-    await prisma.patient.upsert({
-      where: { userId: user.id },
-      update: {
-        bloodType: "O_POSITIVE",
-        emergencySummary:
-          "Cuenta demo para inversionistas: historial clinico, QR de emergencia y resultados conectados.",
-        primaryLanguage: "Spanish",
-      },
-      create: {
-        bloodType: "O_POSITIVE",
-        emergencySummary:
-          "Cuenta demo para inversionistas: historial clinico, QR de emergencia y resultados conectados.",
-        primaryLanguage: "Spanish",
-        userId: user.id,
-      },
-    });
+    await upsertDemoPatient(user.id);
   }
 
   if (account.role === "DOCTOR") {
@@ -147,6 +128,108 @@ export async function upsertDemoAccount(account: ConfiguredDemoAccount) {
   }
 
   return user;
+}
+
+function buildDemoProfile(account: ConfiguredDemoAccount) {
+  const sex: Sex = account.role === "PATIENT" ? "FEMALE" : "UNKNOWN";
+
+  return {
+    dateOfBirth: account.role === "PATIENT" ? new Date("1991-04-18") : null,
+    firstName: account.firstName,
+    lastName: account.lastName,
+    sex,
+  };
+}
+
+async function upsertDemoPatient(userId: string) {
+  const patient = await prisma.patient.upsert({
+    where: { userId },
+    update: {
+      bloodType: "O_NEGATIVE",
+      emergencySummary:
+        "Paciente demo con alergia vital a penicilina, asma severa y diabetes tipo 1. Porta bomba de insulina y requiere verificar glucosa capilar durante triage.",
+      heightCm: "168",
+      organDonor: true,
+      primaryLanguage: "Spanish",
+      weightKg: "62",
+    },
+    create: {
+      bloodType: "O_NEGATIVE",
+      emergencySummary:
+        "Paciente demo con alergia vital a penicilina, asma severa y diabetes tipo 1. Porta bomba de insulina y requiere verificar glucosa capilar durante triage.",
+      heightCm: "168",
+      organDonor: true,
+      primaryLanguage: "Spanish",
+      userId,
+      weightKg: "62",
+    },
+  });
+
+  await prisma.$transaction([
+    prisma.emergencyContact.deleteMany({ where: { patientId: patient.id } }),
+    prisma.allergy.deleteMany({ where: { patientId: patient.id } }),
+    prisma.condition.deleteMany({ where: { patientId: patient.id } }),
+    prisma.medication.deleteMany({ where: { patientId: patient.id } }),
+    prisma.emergencyContact.create({
+      data: {
+        name: "Sofia Ramirez",
+        patientId: patient.id,
+        phone: "+1 (555) 018-4432",
+        priority: 1,
+        relationship: "Hermana",
+      },
+    }),
+    prisma.allergy.createMany({
+      data: [
+        {
+          patientId: patient.id,
+          reaction: "Anafilaxia documentada",
+          severity: "LIFE_THREATENING",
+          substance: "Penicilina",
+        },
+        {
+          patientId: patient.id,
+          reaction: "Broncoespasmo",
+          severity: "SEVERE",
+          substance: "Aspirina",
+        },
+      ],
+    }),
+    prisma.condition.createMany({
+      data: [
+        {
+          name: "Asma severa",
+          notes: "Usa inhalador de rescate",
+          patientId: patient.id,
+          status: "ACTIVE",
+        },
+        {
+          name: "Diabetes tipo 1",
+          notes: "Bomba de insulina",
+          patientId: patient.id,
+          status: "ACTIVE",
+        },
+      ],
+    }),
+    prisma.medication.createMany({
+      data: [
+        {
+          active: true,
+          dosage: "100 mcg",
+          frequency: "cada 6 horas si precisa",
+          name: "Salbutamol",
+          patientId: patient.id,
+        },
+        {
+          active: true,
+          dosage: "bomba",
+          frequency: "continua",
+          name: "Insulina lispro",
+          patientId: patient.id,
+        },
+      ],
+    }),
+  ]);
 }
 
 function buildDemoLicenseNumber(account: ConfiguredDemoAccount) {
