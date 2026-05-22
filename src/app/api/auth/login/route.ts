@@ -72,7 +72,7 @@ export async function POST(request: Request) {
 
     console.error("Login failed", error);
     return jsonError(
-      "Login database is not available yet. Use the investor demo while production credentials are configured.",
+      "Login is temporarily unavailable. Please try again later.",
       503,
     );
   }
