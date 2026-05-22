@@ -30,7 +30,7 @@ export async function POST(request: Request) {
         email: demoUser.email,
         id: demoUser.id,
         profile: demoUser.profile,
-        role: demoUser.role,
+        role: demoAccount.role,
       });
     }
 

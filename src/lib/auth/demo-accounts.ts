@@ -1,6 +1,7 @@
-import { Prisma, UserRole } from "@prisma/client";
+import type { Prisma } from "@prisma/client";
 
 import { hashPassword } from "@/lib/auth/password";
+import type { AuthRole } from "@/lib/auth/constants";
 import { prisma } from "@/lib/prisma";
 
 type DemoAccountKind = "patient" | "doctor" | "lab";
@@ -10,7 +11,7 @@ type DemoAccountDefinition = {
   kind: DemoAccountKind;
   lastName: string;
   prefix: string;
-  role: UserRole.PATIENT | UserRole.DOCTOR | UserRole.CLINIC_ADMIN;
+  role: AuthRole;
 };
 
 export type ConfiguredDemoAccount = DemoAccountDefinition & {
@@ -24,21 +25,21 @@ const demoAccountDefinitions: DemoAccountDefinition[] = [
     kind: "patient",
     lastName: "Demo",
     prefix: "DEMO_PATIENT",
-    role: UserRole.PATIENT,
+    role: "PATIENT",
   },
   {
     firstName: "Doctor",
     kind: "doctor",
     lastName: "Demo",
     prefix: "DEMO_DOCTOR",
-    role: UserRole.DOCTOR,
+    role: "DOCTOR",
   },
   {
     firstName: "Laboratorio",
     kind: "lab",
     lastName: "Demo",
     prefix: "DEMO_LAB",
-    role: UserRole.CLINIC_ADMIN,
+    role: "CLINIC_ADMIN",
   },
 ];
 
@@ -102,7 +103,7 @@ export async function upsertDemoAccount(account: ConfiguredDemoAccount) {
     include: { profile: true },
   });
 
-  if (account.role === UserRole.PATIENT) {
+  if (account.role === "PATIENT") {
     await prisma.patient.upsert({
       where: { userId: user.id },
       update: {
@@ -121,7 +122,7 @@ export async function upsertDemoAccount(account: ConfiguredDemoAccount) {
     });
   }
 
-  if (account.role === UserRole.DOCTOR) {
+  if (account.role === "DOCTOR") {
     await prisma.doctor.upsert({
       where: { userId: user.id },
       update: {
@@ -141,7 +142,7 @@ export async function upsertDemoAccount(account: ConfiguredDemoAccount) {
     });
   }
 
-  if (account.role === UserRole.CLINIC_ADMIN) {
+  if (account.role === "CLINIC_ADMIN") {
     await upsertDemoClinicMembership(user.id);
   }
 
