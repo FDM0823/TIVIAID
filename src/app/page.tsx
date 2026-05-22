@@ -1,6 +1,6 @@
 const metrics = [
   { label: "Acceso QR de emergencia", value: "24/7" },
-  { label: "Modulos de atencion", value: "8" },
+  { label: "Modulos de atencion", value: "9" },
   { label: "Cobertura de auditoria", value: "100%" },
 ];
 
@@ -12,6 +12,7 @@ const modules = [
   "Consentimiento",
   "Citas",
   "Recetas",
+  "Laboratorio clinico",
   "Auditoria",
 ];
 
@@ -58,6 +59,12 @@ export default function Home() {
             Prueba de inversores
           </a>
           <a
+            className="hidden rounded-full bg-teal-100 px-4 py-2 text-sm font-semibold text-teal-900 transition hover:bg-teal-200 lg:inline-flex"
+            href="/lab-demo"
+          >
+            MVP laboratorio
+          </a>
+          <a
             className="rounded-full border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-800 transition hover:border-teal-400 hover:text-teal-700"
             href="/login"
           >
@@ -97,6 +104,12 @@ export default function Home() {
               href="/demo"
             >
               Prueba de inversores
+            </a>
+            <a
+              className="rounded-full bg-slate-950 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800"
+              href="/lab-demo"
+            >
+              MVP laboratorio
             </a>
             <a
               className="rounded-full border border-slate-300 px-6 py-3 text-sm font-semibold text-slate-800 transition hover:border-teal-400 hover:text-teal-700"
@@ -168,6 +181,30 @@ export default function Home() {
               </article>
             ))}
           </div>
+        </div>
+      </section>
+
+      <section className="mb-12 rounded-[2rem] border border-teal-200 bg-white p-6 shadow-sm">
+        <p className="text-sm font-semibold uppercase tracking-[0.25em] text-teal-800">
+          Nuevo MVP para clinica de laboratorio
+        </p>
+        <div className="mt-4 grid gap-6 lg:grid-cols-[1fr_auto] lg:items-center">
+          <div>
+            <h2 className="text-3xl font-bold tracking-tight text-slate-950">
+              LabFlow muestra ordenes, muestras y resultados en una demo separada.
+            </h2>
+            <p className="mt-4 text-sm leading-6 text-slate-700">
+              Presenta el flujo paso a paso para inversores: el doctor solicita
+              estudios, la clinica agenda la muestra, el laboratorio valida
+              resultados y el paciente recibe el reporte.
+            </p>
+          </div>
+          <a
+            className="inline-flex rounded-full bg-teal-600 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-teal-700"
+            href="/lab-demo"
+          >
+            Abrir MVP laboratorio
+          </a>
         </div>
       </section>
     </main>

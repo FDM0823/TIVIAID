@@ -119,6 +119,27 @@ export default async function DashboardPage() {
           </a>
         </section>
       ) : null}
+
+      {user?.role === "CLINIC_ADMIN" ? (
+        <section className="mt-8 rounded-3xl border border-indigo-200 bg-indigo-50 p-6 dark:border-indigo-900 dark:bg-indigo-950/30">
+          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-indigo-800 dark:text-indigo-200">
+            Lab demo module
+          </p>
+          <h2 className="mt-2 text-2xl font-bold text-slate-950 dark:text-white">
+            Review lab orders, samples, and results
+          </h2>
+          <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600 dark:text-slate-300">
+            Use the investor demo flow to present how a clinic receives orders,
+            processes specimens, validates lab values, and releases reports.
+          </p>
+          <a
+            className="mt-5 inline-flex rounded-full bg-indigo-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-indigo-700"
+            href="/lab-demo"
+          >
+            Open lab MVP
+          </a>
+        </section>
+      ) : null}
     </main>
   );
 }

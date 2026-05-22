@@ -40,6 +40,26 @@ Authentication uses an HTTP-only JWT cookie named `tivaid_session`. Set
 `JWT_SECRET` in production. If it is not set locally, the app uses a development
 fallback so the starter can run immediately.
 
+### Demo accounts
+
+Investor/demo access can be configured without hardcoding credentials in the
+repository. Set these environment variables in the deployed environment:
+
+```bash
+DEMO_ACCOUNTS_ENABLED=true
+DEMO_PATIENT_EMAIL=patient-demo@example.com
+DEMO_PATIENT_PASSWORD=replace-with-strong-password
+DEMO_DOCTOR_EMAIL=doctor-demo@example.com
+DEMO_DOCTOR_PASSWORD=replace-with-strong-password
+DEMO_LAB_EMAIL=lab-demo@example.com
+DEMO_LAB_PASSWORD=replace-with-strong-password
+```
+
+When a configured demo email signs in, TivAid only accepts the matching current
+environment password and upserts the patient, doctor, or laboratory clinic-admin
+account in the database. Rotating an environment password immediately blocks the
+previous demo password for that email.
+
 ## Security
 
 The API layer includes shared JSON helpers for security headers, JSON content

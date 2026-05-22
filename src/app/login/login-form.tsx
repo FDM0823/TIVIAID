@@ -22,8 +22,8 @@ export function LoginForm() {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        email: String(formData.get("email") ?? ""),
-        password: String(formData.get("password") ?? ""),
+        email: String(formData.get("loginIdentifier") ?? ""),
+        password: String(formData.get("loginSecret") ?? ""),
       }),
     });
 
@@ -49,28 +49,38 @@ export function LoginForm() {
       subtitle="Sign in to access protected TivAid dashboards."
       title="Welcome back"
     >
-      <form className="space-y-4" onSubmit={handleSubmit}>
+      <form autoComplete="off" className="space-y-4" onSubmit={handleSubmit}>
         <label className="block text-sm font-medium text-slate-700 dark:text-slate-200">
           Email
           <input
-            autoComplete="email"
+            aria-autocomplete="none"
+            autoComplete="off"
             className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-950 outline-none transition focus:border-teal-500 dark:border-slate-700 dark:bg-slate-950 dark:text-white"
-            name="email"
+            data-1p-ignore="true"
+            data-lpignore="true"
+            name="loginIdentifier"
             required
+            spellCheck={false}
             type="email"
           />
         </label>
         <label className="block text-sm font-medium text-slate-700 dark:text-slate-200">
           Password
           <input
-            autoComplete="current-password"
+            aria-autocomplete="none"
+            autoComplete="new-password"
             className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-950 outline-none transition focus:border-teal-500 dark:border-slate-700 dark:bg-slate-950 dark:text-white"
+            data-1p-ignore="true"
+            data-lpignore="true"
             minLength={8}
-            name="password"
+            name="loginSecret"
             required
             type="password"
           />
         </label>
+        <p className="text-xs leading-5 text-slate-500 dark:text-slate-400">
+          For security on shared demo links, saved credentials are not prefilled.
+        </p>
         {error ? (
           <p className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700 dark:bg-red-950/50 dark:text-red-200">
             {error}
