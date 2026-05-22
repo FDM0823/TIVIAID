@@ -5,7 +5,6 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { FormEvent, useState } from "react";
 
 import { AuthCard } from "@/components/auth/auth-card";
-import { DEFAULT_DEMO_CREDENTIALS } from "@/lib/auth/demo-credentials";
 
 export function LoginForm() {
   const router = useRouter();
@@ -98,40 +97,6 @@ export function LoginForm() {
           >
             Open investor demo
           </a>
-        </div>
-        <div className="rounded-2xl border border-teal-200 bg-teal-50 p-4 dark:border-teal-900 dark:bg-teal-950/40">
-          <p className="text-sm font-semibold text-teal-950 dark:text-teal-100">
-            Cuentas demo funcionales
-          </p>
-          <p className="mt-1 text-xs leading-5 text-teal-800 dark:text-teal-200">
-            Usa estas credenciales para entrar a las apps reales con datos demo.
-          </p>
-          <div className="mt-3 space-y-3 text-left">
-            {DEFAULT_DEMO_CREDENTIALS.map((credential) => (
-              <div
-                className="rounded-xl border border-white/70 bg-white p-3 text-xs text-slate-700 dark:border-teal-900 dark:bg-slate-950 dark:text-slate-200"
-                key={credential.email}
-              >
-                <div className="flex flex-wrap items-center justify-between gap-2">
-                  <p className="font-semibold text-slate-950 dark:text-white">
-                    {credential.label}
-                  </p>
-                  <a
-                    className="rounded-full bg-teal-600 px-3 py-1 font-semibold text-white transition hover:bg-teal-700"
-                    href={credential.targetPath}
-                  >
-                    Abrir app
-                  </a>
-                </div>
-                <p className="mt-2 break-all">
-                  <span className="font-semibold">Email:</span> {credential.email}
-                </p>
-                <p className="mt-1 break-all">
-                  <span className="font-semibold">Clave:</span> {credential.password}
-                </p>
-              </div>
-            ))}
-          </div>
         </div>
       </form>
     </AuthCard>

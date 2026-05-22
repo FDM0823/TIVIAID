@@ -1,6 +1,6 @@
 const metrics = [
   { label: "Acceso QR de emergencia", value: "24/7" },
-  { label: "Modulos de atencion", value: "9" },
+  { label: "Modulos de atencion", value: "8" },
   { label: "Cobertura de auditoria", value: "100%" },
 ];
 
@@ -12,7 +12,6 @@ const modules = [
   "Consentimiento",
   "Citas",
   "Recetas",
-  "Laboratorio clinico",
   "Auditoria",
 ];
 
@@ -59,24 +58,6 @@ export default function Home() {
             Prueba de inversores
           </a>
           <a
-            className="hidden rounded-full bg-teal-100 px-4 py-2 text-sm font-semibold text-teal-900 transition hover:bg-teal-200 lg:inline-flex"
-            href="/lab-demo"
-          >
-            MVP laboratorio
-          </a>
-          <a
-            className="hidden rounded-full border border-teal-300 px-4 py-2 text-sm font-semibold text-teal-800 transition hover:border-teal-500 xl:inline-flex"
-            href="/patient-demo"
-          >
-            App paciente
-          </a>
-          <a
-            className="hidden rounded-full border border-cyan-300 px-4 py-2 text-sm font-semibold text-cyan-800 transition hover:border-cyan-500 xl:inline-flex"
-            href="/doctor-demo"
-          >
-            App doctor
-          </a>
-          <a
             className="rounded-full border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-800 transition hover:border-teal-400 hover:text-teal-700"
             href="/login"
           >
@@ -112,28 +93,10 @@ export default function Home() {
               Ver panel de control
             </a>
             <a
-              className="rounded-full border border-teal-300 px-6 py-3 text-sm font-semibold text-teal-800 transition hover:border-teal-500 hover:text-teal-700"
-              href="/patient-demo"
-            >
-              App paciente
-            </a>
-            <a
-              className="rounded-full border border-cyan-300 px-6 py-3 text-sm font-semibold text-cyan-800 transition hover:border-cyan-500 hover:text-cyan-700"
-              href="/doctor-demo"
-            >
-              App doctor
-            </a>
-            <a
               className="rounded-full bg-cyan-600 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-cyan-700"
               href="/demo"
             >
               Prueba de inversores
-            </a>
-            <a
-              className="rounded-full bg-slate-950 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800"
-              href="/lab-demo"
-            >
-              MVP laboratorio
             </a>
             <a
               className="rounded-full border border-slate-300 px-6 py-3 text-sm font-semibold text-slate-800 transition hover:border-teal-400 hover:text-teal-700"
@@ -177,45 +140,6 @@ export default function Home() {
         ))}
       </section>
 
-      <section className="mb-12 grid gap-4 lg:grid-cols-2">
-        <article className="rounded-[2rem] border border-teal-200 bg-teal-50 p-6 shadow-sm">
-          <p className="text-sm font-semibold uppercase tracking-[0.25em] text-teal-800">
-            App del paciente
-          </p>
-          <h2 className="mt-3 text-3xl font-bold tracking-tight text-slate-950">
-            Perfil, QR de emergencia y citas siguen activos.
-          </h2>
-          <p className="mt-4 text-sm leading-6 text-slate-700">
-            Entra como paciente para actualizar datos medicos, generar el QR y
-            revisar el historial conectado.
-          </p>
-          <a
-            className="mt-5 inline-flex rounded-full bg-teal-600 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-teal-700"
-            href="/patient-demo"
-          >
-            Abrir app paciente
-          </a>
-        </article>
-        <article className="rounded-[2rem] border border-cyan-200 bg-cyan-50 p-6 shadow-sm">
-          <p className="text-sm font-semibold uppercase tracking-[0.25em] text-cyan-800">
-            App del doctor
-          </p>
-          <h2 className="mt-3 text-3xl font-bold tracking-tight text-slate-950">
-            Escaneo QR, pacientes y notas siguen activos.
-          </h2>
-          <p className="mt-4 text-sm leading-6 text-slate-700">
-            Entra como doctor para simular el escaneo del paciente, ver alertas
-            clinicas y agregar notas al historial.
-          </p>
-          <a
-            className="mt-5 inline-flex rounded-full bg-cyan-600 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-cyan-700"
-            href="/doctor-demo"
-          >
-            Abrir app doctor
-          </a>
-        </article>
-      </section>
-
       <section className="mb-12 rounded-[2rem] border border-cyan-200 bg-cyan-50 p-6 shadow-sm">
         <p className="text-sm font-semibold uppercase tracking-[0.25em] text-cyan-800">
           Nuevo para atencion de emergencia
@@ -244,30 +168,6 @@ export default function Home() {
               </article>
             ))}
           </div>
-        </div>
-      </section>
-
-      <section className="mb-12 rounded-[2rem] border border-teal-200 bg-white p-6 shadow-sm">
-        <p className="text-sm font-semibold uppercase tracking-[0.25em] text-teal-800">
-          Nuevo MVP para clinica de laboratorio
-        </p>
-        <div className="mt-4 grid gap-6 lg:grid-cols-[1fr_auto] lg:items-center">
-          <div>
-            <h2 className="text-3xl font-bold tracking-tight text-slate-950">
-              LabFlow muestra ordenes, muestras y resultados en una demo separada.
-            </h2>
-            <p className="mt-4 text-sm leading-6 text-slate-700">
-              Presenta el flujo paso a paso para inversores: el doctor solicita
-              estudios, la clinica agenda la muestra, el laboratorio valida
-              resultados y el paciente recibe el reporte.
-            </p>
-          </div>
-          <a
-            className="inline-flex rounded-full bg-teal-600 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-teal-700"
-            href="/lab-demo"
-          >
-            Abrir MVP laboratorio
-          </a>
         </div>
       </section>
     </main>

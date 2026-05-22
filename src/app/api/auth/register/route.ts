@@ -98,7 +98,7 @@ export async function POST(request: Request) {
 
     console.error("Registration failed", error);
     return jsonError(
-      "Registration is temporarily unavailable. Please try again later.",
+      "Registration database is not available yet. Use the investor demo while production credentials are configured.",
       503,
     );
   }

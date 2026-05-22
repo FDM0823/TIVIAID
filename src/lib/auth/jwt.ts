@@ -1,11 +1,6 @@
 import { SignJWT, jwtVerify } from "jose";
 
-import {
-  AUTH_COOKIE_NAME,
-  AUTH_TOKEN_TTL_SECONDS,
-  isAuthRole,
-  type AuthRole,
-} from "./constants";
+import { AUTH_COOKIE_NAME, AUTH_TOKEN_TTL_SECONDS, type AuthRole } from "./constants";
 
 export type AuthTokenPayload = {
   sub: string;
@@ -48,7 +43,7 @@ export async function verifyAuthToken(token: string): Promise<AuthTokenPayload |
       return null;
     }
 
-    if (!isAuthRole(payload.role)) {
+    if (payload.role !== "PATIENT" && payload.role !== "DOCTOR") {
       return null;
     }
 
