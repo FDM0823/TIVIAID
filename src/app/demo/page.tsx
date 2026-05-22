@@ -91,6 +91,12 @@ export default function InvestorDemoPage() {
           <div className="flex flex-wrap gap-2">
             <Link
               className="rounded-full border border-white/20 px-4 py-2 text-sm font-semibold text-white transition hover:bg-white/10"
+              href="/lab-demo"
+            >
+              MVP laboratorio
+            </Link>
+            <Link
+              className="rounded-full border border-white/20 px-4 py-2 text-sm font-semibold text-white transition hover:bg-white/10"
               href="/login"
             >
               Acceso real
