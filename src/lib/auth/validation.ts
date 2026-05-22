@@ -2,7 +2,7 @@ import { z } from "zod";
 
 import { normalizeText } from "@/lib/security/validation";
 
-import { AUTH_ROLES } from "./constants";
+import { SELF_SERVICE_REGISTRATION_ROLES } from "./constants";
 
 export const loginSchema = z.object({
   email: z.email().trim().toLowerCase(),
@@ -15,7 +15,7 @@ export const registerSchema = z
     password: z.string().min(8, "Password must be at least 8 characters."),
     firstName: z.string().transform(normalizeText).pipe(z.string().min(1, "First name is required.").max(80)),
     lastName: z.string().transform(normalizeText).pipe(z.string().min(1, "Last name is required.").max(80)),
-    role: z.enum(AUTH_ROLES),
+    role: z.enum(SELF_SERVICE_REGISTRATION_ROLES),
     licenseNumber: z.string().transform(normalizeText).pipe(z.string().max(80)).optional(),
     licenseCountry: z.string().transform(normalizeText).pipe(z.string().max(80)).optional(),
     licenseRegion: z.string().transform(normalizeText).pipe(z.string().max(80)).optional(),
