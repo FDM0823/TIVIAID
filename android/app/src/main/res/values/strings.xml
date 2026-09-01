@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">TivAid</string>
+    <string name="title_activity_main">TivAid</string>
+    <string name="package_name">com.tivaid.app</string>
+    <string name="custom_url_scheme">com.tivaid.app</string>
+</resources>
